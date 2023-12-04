@@ -8,7 +8,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { useDebounce } from '../CusHook/useDebounce';
+import { useDebounce } from '../pages/useDebounce';
 
 // localStorage
 let storedData = localStorage.getItem('favouritePackage');
@@ -42,12 +42,24 @@ const AddFavouritePackage = () => {
   // submit button handling
   const handleSubmit = () => {
     if (!package_name) {
-      alert(`Please choose any package.`);
+      // alert(`Please choose any package.`);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Please choose any package.",
+        footer: '<a href="#">Something went wrong!</a>'
+      });
       return;
     }
 
     if (!desc) {
-      alert(`Please add your favourite part.`);
+      // alert(`Please add your favourite part.`);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Please add your favourite part.",
+        footer: '<a href="#">Something went wrong!</a>'
+      });
       return;
     }
 
