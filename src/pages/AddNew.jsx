@@ -10,13 +10,6 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { useDebounce } from '../pages/useDebounce';
 
-// localStorage
-let storedData = localStorage.getItem('favouritePackage');
-let LSFavouriteData = storedData ? JSON.parse(storedData) : [];
-
-// typechecking for data
-
-
 const AddFavouritePackage = () => {
   const [searchText, setSearchText] = useState('');
   const debounceSearchText = useDebounce(searchText, 1000);
@@ -25,7 +18,6 @@ const AddFavouritePackage = () => {
   const [desc, setDesc] = useState('');
   const navigation = useNavigate();
 
-  // api call handling
   useEffect(() => {
     axios
       .get(`https://api.npms.io/v2/search?q=${debounceSearchText}`)
@@ -33,48 +25,34 @@ const AddFavouritePackage = () => {
       .catch((err) => '');
   }, [debounceSearchText]);
 
-  // handlingRadioEvent
   const handleRadioChange = (e) => {
     const value = e.target.value;
     setPackageName(value);
   };
 
-  // submit button handling
   const handleSubmit = () => {
-    if (!package_name) {
-      // alert(`Please choose any package.`);
+    if (!package_name || !desc) {
       Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Please choose any package.",
-        footer: '<a href="#">Something went wrong!</a>'
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Please choose any package and add your favorite part.',
+        footer: '<a href="#">Something went wrong!</a>',
       });
       return;
     }
 
-    if (!desc) {
-      // alert(`Please add your favourite part.`);
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Please add your favourite part.",
-        footer: '<a href="#">Something went wrong!</a>'
-      });
-      return;
-    }
-
-    storedData = localStorage.getItem('favouritePackage');
-    LSFavouriteData = storedData ? JSON.parse(storedData) : [];
     const newPackage = { package_name, desc };
 
     Swal.fire({
       position: 'center',
       icon: 'success',
-      title: 'Package added to favourite',
+      title: 'Package added to favorite',
       showConfirmButton: false,
       timer: 1500,
     });
 
+    const storedData = localStorage.getItem('favouritePackage');
+    const LSFavouriteData = storedData ? JSON.parse(storedData) : [];
     LSFavouriteData.push(newPackage);
     localStorage.setItem('favouritePackage', JSON.stringify(LSFavouriteData));
 
@@ -84,7 +62,7 @@ const AddFavouritePackage = () => {
   };
 
   return (
-    <div>
+    <div style={{ padding: '20px' }}>
       <div style={{ width: '90%', margin: 'auto', marginTop: '5px' }}>
         <p style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#4B5563' }}>
           Search for NPM Packages.
@@ -108,17 +86,15 @@ const AddFavouritePackage = () => {
             </p>
           ) : (
             <RadioGroup>
-              {searchedData?.map((el, ind) => {
-                return (
-                  <FormControlLabel
-                    key={ind}
-                    value={el.package.name}
-                    control={<Radio color="primary" />}
-                    label={<span style={{ fontSize: '1rem' }}>{el.package.name}</span>}
-                    onChange={handleRadioChange}
-                  />
-                );
-              })}
+              {searchedData?.map((el, ind) => (
+                <FormControlLabel
+                  key={ind}
+                  value={el.package.name}
+                  control={<Radio color="primary" />}
+                  label={<span style={{ fontSize: '1rem' }}>{el.package.name}</span>}
+                  onChange={handleRadioChange}
+                />
+              ))}
             </RadioGroup>
           )}
         </div>
